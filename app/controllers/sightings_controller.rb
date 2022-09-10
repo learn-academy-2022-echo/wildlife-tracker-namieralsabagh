@@ -5,14 +5,21 @@ class SightingsController < ApplicationController
         render json: sightings
     end
 
-    def create 
-        animal = Animal.find(params[:sighting][:animal_id]) 
-        sighting = animal.sightings.create(sighting_params)
-        if sighting.valid?
-        render json: sighting
-        else
-        render json: sighting.errors
+    def show
+        sighting = Sighting.find(id: params[:id])
+        if sighting 
+        render json: sighting,include:[:animals]
+            else 
+            render json: {message: 'No sighting found with that id'}
         end
+
+     def create
+        sighting = Sighting.create(sighting_params)
+            if sighting.valid?
+             render json: sighting
+         else
+             render json: animal.errors
+         end
     end
 
     def update
