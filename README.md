@@ -2,14 +2,25 @@ Wildlife Tracker Challenge The Forest Service is considering a proposal to place
 
 Story 1: In order to track wildlife sightings, as a user of the API, I need to manage animals.
 
+Setting up the Rails Application;
+
+$ cd desktop
+$ rails db:create
 $ rails new wildlife-tracker -d postgresql -T
 $ cd wildlife-tracker
+$ git remote add origin https://github.com/learn-academy-2022-echo/wildlife-tracker-namieralsabagh.git
+$ code .
+$ git commit -m "Initial commit"
+$ git push origin main
+$ git checkout main
+$ git pull origin main
 $ git branch
 $ git checkout -b animal-crud-actions
+$ code .
 $ bundle add rspec-rails
 $ rails generate rspec:install
-$ code .
 $ rails s
+
 
 Branch: animal-crud-actions ✅
 
@@ -162,19 +173,51 @@ Can remove an animal sighting in the database✅
 Story 3: In order to see the wildlife sightings, as a user of the API, I need to run reports on animal sightings.
 
   
-Branch: animal-sightings-reports
+Branch: animal-sightings-reports✅
 
 Acceptance Criteria
 
-Can see one animal with all its associated sightings 
-
+Can see one animal with all its associated sightings ✅
 Hint: Checkout this example on how to include associated records 
 
-Can see all the all sightings during a given time period 
+class Animal < ApplicationRecord
+    has_many:sightings
+end
 
-Hint: Your controller can use a range to look like this: class SightingsController < ApplicationController def index sightings = Sighting.where(date: params[:start_date]..params[:end_date]) render json: sightings end end 
+class Sighting < ApplicationRecord
+    belongs_to:animal
+end
 
-Hint: Be sure to add the start_date and end_date to what is permitted in your strong parameters method 
+Can see all the all sightings during a given time period ✅
+
+class SightingsController < ApplicationController
+
+def show
+        sighting = Sighting.find(id: params[:id])
+        if sighting 
+        render json: sighting,include:[:animals]
+            else 
+            render json: {message: 'No sighting found with that id'}
+        end
+
+Hint: Your controller can use a range to look like this: class SightingsController < ApplicationController def index sightings = Sighting.where(date: params[:start_date]..params[:end_date]) render json: sightings end end ✅
+
+def create
+        sighting = Sighting.create(sighting_params)
+        if sighting.valid?
+            render json: sighting
+            else
+                render json: animal.errors
+            end
+        end
+
+Hint: Be sure to add the start_date and end_date to what is permitted in your strong parameters method ✅
+
+private
+    def sighting_params
+        params.require(:sighting).permit(:animal_id, :latitude, :longitude, :date, :start_date, :end_date)
+    end
+end
 
 Hint: Utilize the params section in Postman to ease the developer experience Hint: Routes with params Stretch Challenges 
 
